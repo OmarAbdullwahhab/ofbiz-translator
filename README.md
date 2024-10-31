@@ -1,6 +1,6 @@
 # README
 
-### OpenAI api key.
+### OpenAI api key (Optional).
 
 * Create your openai account at [OpenAI platform](https://platform.openai.com)
 * Then go to your profile [OpenAI profile link] (https://platform.openai.com/settings/profile)
