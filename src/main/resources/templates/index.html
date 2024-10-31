@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Ofbiz Translator</title>
+
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+	<style>
+		* {
+			font-size: 14px !important;
+		}
+	</style>
+</head>
+
+<body class="container bg-light">
+	<form th:action="@{/}" th:method="post" th:object="${attachment}">
+		<div class="form-group">
+			<label>Path of ofbiz xml labels: </label>
+			<input th:field="*{path}" type="text" class="form-control" />
+		</div>
+
+		<div class="form-group d-flex flex-row justify-content-between my-2 align-items-center">
+			<div class="form-group">
+				<label>Select Locale To Translate: </label>
+				<select class="form-control" th:field="*{otherLangIsoCode}" required>
+					<option th:each="locale : ${locales}" th:value="${locale.key}" th:text="${locale.name}"></option>
+				</select>
+			</div>
+			<button class="btn btn-secondary btn-small" type="submit">View File Contents</button>
+			<div>
+				<label>Total Labels/Items: </label>
+				<span class="btn btn-sm btn-success" th:text="${totalItems + ''}"></span>
+			</div>
+		</div>
+	</form>
+	<hr />
+	<table class="table table-light table-sm table-responive table-stripped">
+		<thead>
+			<tr>
+				<th>
+					<form th:action="@{/trans-range}" th:method="post" th:object="${rModel}">
+
+							<input  th:field="*{path}" type="hidden" class="form-control" />
+						<input class="form-control" th:field="*{otherLangIsoCode}" type="hidden"/>
+						<div class="form-group">
+							<label>Enter Label Range (start-end: <span class="text-gray">1-100</span>) </label>
+							<input  th:field="*{range}" type="text" class="form-control" />
+						</div>
+							<div class="form-group my-1">
+								<label class="text-danger">Skip existing translations </label>
+								<input  th:field="*{skipTranslated}" type="checkbox" class="form-control-check" />
+							</div>
+						<div class="form-group my-2">
+							<button class="btn btn-warning  btn-sm" type="submit">Gpt Translate Range</button>
+						</div>
+					</form>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="trans : ${translations}">
+				<td>
+					<p ><span th:text="${trans.key}"></span> - <span th:text="${trans.id}"></span></p>
+					<p th:text="${trans.en}"> </p>
+
+					<form th:hx-post="@{/gpt}" th:hx-target="${'#' + trans.id}" hx-swap="outerHTML"
+						th:object="${trans}">
+						<input type="hidden" th:value="${trans.key}" name="key" />
+						<input type="hidden" th:value="${trans.en}" name="en" />
+						<input type="hidden" th:value="${trans.id}" name="id" />
+						<input type="hidden" th:value="${trans.otherLangIsoCode}" name="otherLangIsoCode" />
+						<div>
+							<textarea th:text="${trans.otherLangText}" th:id="${trans.id}" name="otherLangText" class="form-control"  dir="${trans.direction}"
+								th:style="${trans.style}"></textarea>
+							<br />
+
+							<button type="submit" class="btn btn-sm btn-success" th:formaction="@{/gpt}">GPT
+								Translate</button>
+							<button type="submit" class="btn btn-sm btn-primary"
+								th:formaction="@{/update}">Update</button>
+						</div>
+					</form>
+				</td>
+
+
+			</tr>
+		</tbody>
+	</table>
+	<script type="text/javascript" src="/js/bootstrap.bundle.min.js"></script>
+	<script type="text/javascript" src="/js/htmx.min.js"></script>
+
+</body>
+
+</html>

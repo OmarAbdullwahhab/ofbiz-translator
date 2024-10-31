@@ -1,0 +1,8 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" xmlns:hx="http://www.w3.org/1999/xhtml">
+
+<textarea th:fragment="gptItem(trans)" th:text="${trans.otherLangText}"
+          th:id="${trans.id}"
+          name="otherLangText"  class="form-control"
+          dir="${trans.direction}" th:style="${trans.style}"></textarea>
+</html>
